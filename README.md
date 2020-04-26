@@ -2,8 +2,8 @@
 
 # Setup
 ```
-git clone TODO
-cd sinatra_api_exampl_1
+git clone https://github.com/julweber/sinatra_api_example_1.git
+cd sinatra_api_example_1
 
 # env
 export DATABASE_HOST=localhost
@@ -11,7 +11,8 @@ export DATABASE_USERNAME="vagrant"
 export DATABASE_PASSWORD="vagrant"
 export RACK_ENV=development
 
-
+bundle update --bundler
+bundle install
 bundle exec rake db:migrate
 bundle exec rake db:seed
 bundle exec ruby ./app/app.rb
