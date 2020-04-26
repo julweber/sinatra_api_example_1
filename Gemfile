@@ -6,5 +6,20 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 # gem "rails"
 
+# web framework
 gem 'sinatra'
+
+# database ORM
+gem 'sinatra-activerecord'
+
+# task automation
+gem 'rake'
+
+# command pattern
 gem 'trailblazer'
+
+# console
+gem 'irb', require: false
+
+# debugging
+gem 'byebug'
