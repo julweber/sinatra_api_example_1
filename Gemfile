@@ -11,6 +11,7 @@ gem 'sinatra'
 
 # database ORM
 gem 'sinatra-activerecord'
+gem 'pg'
 
 # task automation
 gem 'rake'
