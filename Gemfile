@@ -11,6 +11,7 @@ gem 'sinatra'
 
 # database ORM
 gem 'sinatra-activerecord'
+# postgres client
 gem 'pg'
 
 # task automation

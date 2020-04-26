@@ -1,6 +1,6 @@
 require 'sinatra'
 require 'trailblazer'
-require 'active_record'
+require 'sinatra/activerecord'
 
 # require debugger for non prod envs
 if ENV['RACK_ENV'] != 'production'
@@ -14,13 +14,22 @@ require_relative 'concepts/customer/operation/list.rb'
 require_relative 'concepts/customer/operation/retrieve.rb'
 
 
-
-# configuration
+##############################
+# Configuration
+##############################
+set :database_file, 'config/database.yml'
 set :bind, '0.0.0.0'
 PORT = ENV['PORT'] || '3000'
 set :port, PORT
 
 VERSION = File.open("VERSION").read
+ENVIRONMENT = ENV['RACK_ENV'] || 'development'
+puts "ENVIRONMENT: #{ENVIRONMENT}"
+
+if ENVIRONMENT != 'production'
+  puts "ENV:"
+  pp ENV
+end
 
 # byebug
 
