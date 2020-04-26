@@ -1,4 +1,4 @@
-class Customer::Retriev < Trailblazer::Operation
+class Customer::Retrieve < Trailblazer::Operation
   step :test
 
   def test(options, params:, **)

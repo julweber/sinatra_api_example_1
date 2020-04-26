@@ -1,8 +1,8 @@
 class Customer::List < Trailblazer::Operation
-  step :test
+  step :retrieve_all
 
-  def test(options, params:, **)
-    puts "test"
+  def retrieve_all(options, params:, **)
+    options[:model] = Customer.all
     return true
   end
 end

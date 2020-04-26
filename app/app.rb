@@ -74,10 +74,14 @@ end
 get '/customers' do
   res = Customer::List.(params)
   if res.success?
-    res[:model].to_s
+    response.body = {
+      count: res[:model].count,
+      results: res[:model].to_a
+    }
   else
-    response.status = 500
-    'ERROR'
+    return_error response,
+      500,
+      "An unexpected error occured while retrieving models from the database!"
   end
 end
 
@@ -95,4 +99,14 @@ end
 # get specific customer by id
 get '/customers/:id' do
   "#{params[:id]}"
+end
+
+# helpers
+
+def return_error(response, error_code, message)
+  response.body = {
+    error_message: message,
+    status: error_code
+  }
+  response.status = error_code
 end
