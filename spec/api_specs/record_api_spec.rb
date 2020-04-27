@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+BASE_ROUTE="/v1/customers"
+
 describe "Record API" do
   before(:each) do
     @customer = Customer.create!(email: "new1@example.com", firstname: "New", lastname: "One")
@@ -10,7 +12,7 @@ describe "Record API" do
 
     context 'with no records available for the customer' do
       it "should return count 0" do
-        get "/customers/#{@customer_id}/records"
+        get "#{BASE_ROUTE}/#{@customer_id}/records"
 
         result = JSON.parse(last_response.body)
         expect(result['count']).to eq 0
@@ -30,14 +32,14 @@ describe "Record API" do
       end
 
       it 'should return count 2' do
-        get "/customers/#{@customer_id}/records"
+        get "#{BASE_ROUTE}/#{@customer_id}/records"
 
         result = JSON.parse(last_response.body)
         expect(result['count']).to eq 2
       end
 
       it 'should return 2 record hashes in items sub-hash' do
-        get "/customers/#{@customer_id}/records"
+        get "#{BASE_ROUTE}/#{@customer_id}/records"
 
         result = JSON.parse(last_response.body)
         expect(result['items'].count).to eq 2

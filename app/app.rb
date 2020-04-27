@@ -17,6 +17,7 @@ require_relative 'concepts/representation/list_representer.rb'
 # customer concept
 require_relative 'concepts/customer/customer.rb'
 require_relative 'concepts/customer/operation/create.rb'
+require_relative 'concepts/customer/operation/create_v2.rb'
 require_relative 'concepts/customer/operation/list.rb'
 require_relative 'concepts/customer/operation/retrieve.rb'
 require_relative 'concepts/customer/operation/update.rb'
@@ -67,7 +68,7 @@ end
 ##################################
 
 # info endpoint
-get '/info' do
+get '/v1/info' do
   info = {
     name: 'spring_api_example_1',
     version: VERSION
@@ -76,7 +77,7 @@ get '/info' do
 end
 
 # health stats
-get '/health' do
+get '/v1/health' do
   ActiveRecord::Base.connection.execute("SELECT * FROM customers LIMIT 1")
   response.status = 200
   response.body = {
@@ -95,7 +96,7 @@ end
 
 # redirection example
 get '/redirect' do
-  redirect '/info'
+  redirect '/v1/info'
 end
 
 ##########################
@@ -103,7 +104,7 @@ end
 ##########################
 
 # retrieve a list of customers
-get '/customers' do
+get '/v1/customers' do
   res = Customer::List.(params)
   if res.success?
     response.body = ::Representation::ListRepresenter.new(res[:model]).to_json
@@ -116,7 +117,7 @@ get '/customers' do
 end
 
 # create customer
-post '/customers' do
+post '/v1/customers' do
   payload = JSON.parse(request.body.read).symbolize_keys
   res = Customer::Create.(payload)
   if res.success?
@@ -129,8 +130,22 @@ post '/customers' do
   end
 end
 
+# create customer V2 endpoint with email mock
+post '/v2/customers' do
+  payload = JSON.parse(request.body.read).symbolize_keys
+  res = Customer::CreateV2.(payload)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 201
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while creating a customer!"
+  end
+end
+
 # get specific customer by id
-get '/customers/:id' do
+get '/v1/customers/:id' do
   res = Customer::Retrieve.(params)
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
@@ -143,7 +158,7 @@ get '/customers/:id' do
 end
 
 # modify specific customer by id
-put '/customers/:id' do
+put '/v1/customers/:id' do
   payload = JSON.parse(request.body.read)
   all_params = payload.merge(params).symbolize_keys
   res = Customer::Update.(all_params)
@@ -157,7 +172,7 @@ put '/customers/:id' do
   end
 end
 
-put '/customers/:id/activate' do
+put '/v1/customers/:id/activate' do
   res = Customer::Activate.(params)
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
@@ -169,7 +184,7 @@ put '/customers/:id/activate' do
   end
 end
 
-put '/customers/:id/deactivate' do
+put '/v1/customers/:id/deactivate' do
   res = Customer::Deactivate.(params)
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
@@ -186,7 +201,7 @@ end
 ##########################
 
 # list records
-get '/customers/:customer_id/records' do
+get '/v1/customers/:customer_id/records' do
   res = Record::List.(params)
   if res.success?
     response.body = ::Representation::ListRepresenter.new(res[:model]).to_json
@@ -199,7 +214,7 @@ get '/customers/:customer_id/records' do
 end
 
 # get specific record by id and customer_id
-get '/customers/:customer_id/records/:id' do
+get '/v1/customers/:customer_id/records/:id' do
   res = Record::Retrieve.(params)
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
@@ -212,7 +227,7 @@ get '/customers/:customer_id/records/:id' do
 end
 
 # create record
-post '/customers/:customer_id/records' do
+post '/v1/customers/:customer_id/records' do
   payload = JSON.parse(request.body.read).symbolize_keys
   res = Record::Create.(payload.merge(customer_id: params[:customer_id]))
   if res.success?
@@ -226,7 +241,7 @@ post '/customers/:customer_id/records' do
 end
 
 # modify specific record by id and customer_id
-put '/customers/:customer_id/records/:id' do
+put '/v1/customers/:customer_id/records/:id' do
   payload = JSON.parse(request.body.read)
   all_params = payload.merge(params).symbolize_keys
   res = Record::Update.(all_params)
@@ -245,7 +260,7 @@ end
 ##########################
 
 # list records
-get '/customers/:customer_id/movies' do
+get '/v1/customers/:customer_id/movies' do
   res = Movie::List.(params)
   if res.success?
     response.body = ::Representation::ListRepresenter.new(res[:model]).to_json
@@ -258,7 +273,7 @@ get '/customers/:customer_id/movies' do
 end
 
 # get specific record by id and customer_id
-get '/customers/:customer_id/movies/:id' do
+get '/v1/customers/:customer_id/movies/:id' do
   res = Movie::Retrieve.(params)
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
@@ -271,7 +286,7 @@ get '/customers/:customer_id/movies/:id' do
 end
 
 # create record
-post '/customers/:customer_id/movies' do
+post '/v1/customers/:customer_id/movies' do
   payload = JSON.parse(request.body.read).symbolize_keys
   res = Movie::Create.(payload.merge(customer_id: params[:customer_id]))
   if res.success?
@@ -285,7 +300,7 @@ post '/customers/:customer_id/movies' do
 end
 
 # modify specific record by id and customer_id
-put '/customers/:customer_id/movies/:id' do
+put '/v1/customers/:customer_id/movies/:id' do
   payload = JSON.parse(request.body.read)
   all_params = payload.merge(params).symbolize_keys
   res = Movie::Update.(all_params)
@@ -299,7 +314,7 @@ put '/customers/:customer_id/movies/:id' do
   end
 end
 
-put '/customers/:customer_id/movies/:id/rate' do
+put '/v1/customers/:customer_id/movies/:id/rate' do
   payload = JSON.parse(request.body.read)
   all_params = payload.merge(params).symbolize_keys
   res = Movie::Rate.(all_params)

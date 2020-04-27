@@ -1,5 +1,7 @@
 require 'spec_helper'
 
+BASE_ROUTE="/v1/customers"
+
 describe "Movie API" do
   before(:each) do
     @customer = Customer.create!(email: "new1@example.com", firstname: "New", lastname: "One")
@@ -10,7 +12,7 @@ describe "Movie API" do
 
     context 'with no movies available for the customer' do
       it "should return count 0" do
-        get "/customers/#{@customer_id}/movies"
+        get "#{BASE_ROUTE}/#{@customer_id}/movies"
 
         result = JSON.parse(last_response.body)
         expect(result['count']).to eq 0
@@ -30,14 +32,14 @@ describe "Movie API" do
       end
 
       it 'should return count 2' do
-        get "/customers/#{@customer_id}/movies"
+        get "#{BASE_ROUTE}/#{@customer_id}/movies"
 
         result = JSON.parse(last_response.body)
         expect(result['count']).to eq 2
       end
 
       it 'should return 2 movie hashes in items sub-hash' do
-        get "/customers/#{@customer_id}/movies"
+        get "#{BASE_ROUTE}/#{@customer_id}/movies"
 
         result = JSON.parse(last_response.body)
         expect(result['items'].count).to eq 2
@@ -65,7 +67,7 @@ describe "Movie API" do
 
     it 'should set the given rating for a movie' do
       body = { rating: 4 }
-      put "/customers/#{@customer_id}/movies/#{@movie.id}/rate", body.to_json
+      put "#{BASE_ROUTE}/#{@customer_id}/movies/#{@movie.id}/rate", body.to_json
       result = JSON.parse(last_response.body)
       expect(result['rating'].to_i).to eq 4
     end
