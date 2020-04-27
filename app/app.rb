@@ -30,6 +30,13 @@ require_relative 'concepts/record/operation/list.rb'
 require_relative 'concepts/record/operation/retrieve.rb'
 require_relative 'concepts/record/operation/update.rb'
 
+# movie concept
+require_relative 'concepts/movie/movie.rb'
+require_relative 'concepts/movie/operation/create.rb'
+require_relative 'concepts/movie/operation/list.rb'
+require_relative 'concepts/movie/operation/retrieve.rb'
+require_relative 'concepts/movie/operation/update.rb'
+require_relative 'concepts/movie/operation/rate.rb'
 
 ##############################
 # Configuration
@@ -223,6 +230,79 @@ put '/customers/:customer_id/records/:id' do
   payload = JSON.parse(request.body.read)
   all_params = payload.merge(params).symbolize_keys
   res = Record::Update.(all_params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 202
+  else
+    return_error response,
+      404,
+      res[:error_message]
+  end
+end
+
+##########################
+# Movie Endpoints
+##########################
+
+# list records
+get '/customers/:customer_id/movies' do
+  res = Movie::List.(params)
+  if res.success?
+    response.body = ::Representation::ListRepresenter.new(res[:model]).to_json
+    response.status = 200
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while retrieving models from the database!"
+  end
+end
+
+# get specific record by id and customer_id
+get '/customers/:customer_id/movies/:id' do
+  res = Movie::Retrieve.(params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 200
+  else
+    return_error response,
+      404,
+      res[:error_message]
+  end
+end
+
+# create record
+post '/customers/:customer_id/movies' do
+  payload = JSON.parse(request.body.read).symbolize_keys
+  res = Movie::Create.(payload.merge(customer_id: params[:customer_id]))
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 201
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while creating a movie!"
+  end
+end
+
+# modify specific record by id and customer_id
+put '/customers/:customer_id/movies/:id' do
+  payload = JSON.parse(request.body.read)
+  all_params = payload.merge(params).symbolize_keys
+  res = Movie::Update.(all_params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 202
+  else
+    return_error response,
+      404,
+      res[:error_message]
+  end
+end
+
+put '/customers/:customer_id/movies/:id/rate' do
+  payload = JSON.parse(request.body.read)
+  all_params = payload.merge(params).symbolize_keys
+  res = Movie::Rate.(all_params)
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
     response.status = 202

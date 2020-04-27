@@ -87,4 +87,23 @@ curl -X POST -H "Accept: application/json" -d '{"record":{"artist":"Marvin Gaye"
 # update record
 curl -X PUT -H "Accept: application/json" -d '{"record":{"artist":"Marvin Gaye","title":"I want you","genre":"Soul"}}' http://localhost:3000/customers/1/records/1 | jq '.'
 
+###########
+# movies
+###########
+curl -L http://localhost:3000/customers/1/movies | jq '.'
+curl -v -L http://localhost:3000/customers/1/movies/1 |jq '.'
+
+
+# create movie
+curl -X POST -H "Accept: application/json" -d '{"movie":{"director":"Quentin Tarantino","title":"Jackie Brown","genre":"Heist Movie"}}' http://localhost:3000/customers/1/movies | jq '.'
+
+# update movie
+curl -X PUT -H "Accept: application/json" -d '{"movie":{"title":"Pulp Fiction"}}' http://localhost:3000/customers/1/movies/1 | jq '.'
+
+# rate movie
+curl -X PUT -H "Accept: application/json" -d '{"rating":4}' http://localhost:3000/customers/1/movies/1/rate | jq '.'
+
+# retrieve updated movie
+curl -v -L http://localhost:3000/customers/1/movies/1 |jq '.'
+
 ```

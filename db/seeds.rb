@@ -35,3 +35,24 @@ if Record.count == 0
   })
 
 end
+
+########### Movies #############
+if Movie.count == 0
+  puts "Creating movies ..."
+  customer1 = Customer.first
+  customer2 = Customer.last
+
+  customer1.movies.create({
+    director: "Spike Jonze",
+    title: "Being John Malkovich",
+    rating: 5,
+    genre: "Strange"
+  })
+
+  customer2.movies.create({
+    director: "Spike Lee",
+    title: "Malcolm X",
+    rating: 4,
+    genre: "History"
+  })
+end
