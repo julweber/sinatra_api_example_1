@@ -1,15 +1,14 @@
 class Customer::Create < Trailblazer::Operation
-  step :puts_params
-  step :test
+  step :get_customer_hash
+  step :create_customer
 
-  def puts_params(options, params:, **)
-    puts params
+  def get_customer_hash(options, params:, **)
+    options[:customer_params] = params[:customer]
     return true
   end
 
-  def test(options, params:, **)
-    puts "test"
-    options[:model] = Customer.new
+  def create_customer(options, params:, **)
+    options[:model] = Customer.create options[:customer_params]
     return true
   end
 end

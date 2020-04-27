@@ -8,10 +8,17 @@ if ENV['RACK_ENV'] != 'production'
 end
 
 # Load files
+
+# Representation layer
+require_relative 'concepts/representation/representation.rb'
+require_relative 'concepts/representation/item_representer.rb'
+require_relative 'concepts/representation/list_representer.rb'
+
 require_relative 'concepts/customer/customer.rb'
 require_relative 'concepts/customer/operation/create.rb'
 require_relative 'concepts/customer/operation/list.rb'
 require_relative 'concepts/customer/operation/retrieve.rb'
+require_relative 'concepts/customer/operation/update.rb'
 
 
 ##############################
@@ -22,6 +29,12 @@ set :bind, '0.0.0.0'
 PORT = ENV['PORT'] || '3000'
 set :port, PORT
 
+# set json as content type for all requests
+before do
+  content_type 'application/json'
+end
+mime_type :json, 'application/json'
+
 VERSION = File.open("VERSION").read
 ENVIRONMENT = ENV['RACK_ENV'] || 'development'
 puts "ENVIRONMENT: #{ENVIRONMENT}"
@@ -31,12 +44,10 @@ if ENVIRONMENT != 'production'
   pp ENV
 end
 
-# byebug
 
-# set json as content type for all requests
-before do
-  content_type 'application/json'
-end
+##################################
+#### Endpoints ###################s
+##################################
 
 # info endpoint
 get '/info' do
@@ -74,10 +85,8 @@ end
 get '/customers' do
   res = Customer::List.(params)
   if res.success?
-    response.body = {
-      count: res[:model].count,
-      results: res[:model].to_a
-    }
+    response.body = ::Representation::ListRepresenter.new(res[:model]).to_json
+    response.status = 200
   else
     return_error response,
       500,
@@ -87,18 +96,45 @@ end
 
 # create customer
 post '/customers' do
-  res = Customer::Create.(params)
+  payload = JSON.parse(request.body.read).symbolize_keys
+  res = Customer::Create.(payload)
   if res.success?
-    res[:model].to_s.to_json
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 201
   else
-    response.status = 500
-    'ERROR'
+    return_error response,
+      500,
+      "An unexpected error occured while creating a customer!"
   end
 end
 
 # get specific customer by id
 get '/customers/:id' do
-  "#{params[:id]}"
+  res = Customer::Retrieve.(params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 200
+  else
+    return_error response,
+      404,
+      res[:error_message]
+  end
+end
+
+# modify specific customer by id
+put '/customers/:id' do
+  byebug
+  payload = JSON.parse(request.body.read)
+  all_params = payload.merge(params).symbolize_keys
+  res = Customer::Update.(all_params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 202
+  else
+    return_error response,
+      404,
+      res[:error_message]
+  end
 end
 
 # helpers
@@ -106,7 +142,7 @@ end
 def return_error(response, error_code, message)
   response.body = {
     error_message: message,
-    status: error_code
-  }
+    status: "#{error_code}"
+  }.to_jsons
   response.status = error_code
 end
