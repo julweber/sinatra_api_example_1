@@ -62,7 +62,9 @@ curl -L http://localhost:3000/health | jq '.'
 sudo service postgresql start
 curl -L http://localhost:3000/health | jq '.'
 
+###########
 # customers
+###########
 curl -L http://localhost:3000/customers | jq '.'
 curl -v -L http://localhost:3000/customers/1 |jq '.'
 
@@ -71,4 +73,18 @@ curl -X POST -H "Accept: application/json" -d '{"customer":{"email":"super@examp
 
 # update customer
 curl -X PUT -H "Accept: application/json" -d '{"customer":{"firstname":"Changed","email":"exchanged@example.com"}}' http://localhost:3000/customers/1 | jq '.'
+
+###########
+# records
+###########
+curl -L http://localhost:3000/customers/1/records | jq '.'
+curl -v -L http://localhost:3000/customers/1/records/1 |jq '.'
+
+
+# create record
+curl -X POST -H "Accept: application/json" -d '{"record":{"artist":"Marvin Gaye","title":"Whats going on?","genre":"Soul"}}' http://localhost:3000/customers/1/records | jq '.'
+
+# update record
+curl -X PUT -H "Accept: application/json" -d '{"record":{"artist":"Marvin Gaye","title":"I want you","genre":"Soul"}}' http://localhost:3000/customers/1/records/1 | jq '.'
+
 ```

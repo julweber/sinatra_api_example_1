@@ -14,7 +14,7 @@ require_relative 'concepts/representation/representation.rb'
 require_relative 'concepts/representation/item_representer.rb'
 require_relative 'concepts/representation/list_representer.rb'
 
-# customer operations
+# customer concept
 require_relative 'concepts/customer/customer.rb'
 require_relative 'concepts/customer/operation/create.rb'
 require_relative 'concepts/customer/operation/list.rb'
@@ -22,6 +22,13 @@ require_relative 'concepts/customer/operation/retrieve.rb'
 require_relative 'concepts/customer/operation/update.rb'
 require_relative 'concepts/customer/operation/activate.rb'
 require_relative 'concepts/customer/operation/deactivate.rb'
+
+# record concept
+require_relative 'concepts/record/record.rb'
+require_relative 'concepts/record/operation/create.rb'
+require_relative 'concepts/record/operation/list.rb'
+require_relative 'concepts/record/operation/retrieve.rb'
+require_relative 'concepts/record/operation/update.rb'
 
 
 ##############################
@@ -164,6 +171,66 @@ put '/customers/:id/deactivate' do
     return_error response,
       500,
       "An unexpected error occured while deactivating a customer!"
+  end
+end
+
+##########################
+# Record Endpoints
+##########################
+
+# list records
+get '/customers/:customer_id/records' do
+  res = Record::List.(params)
+  if res.success?
+    response.body = ::Representation::ListRepresenter.new(res[:model]).to_json
+    response.status = 200
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while retrieving models from the database!"
+  end
+end
+
+# get specific record by id and customer_id
+get '/customers/:customer_id/records/:id' do
+  res = Record::Retrieve.(params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 200
+  else
+    return_error response,
+      404,
+      res[:error_message]
+  end
+end
+
+# create record
+post '/customers/:customer_id/records' do
+  payload = JSON.parse(request.body.read).symbolize_keys
+  byebug
+  res = Record::Create.(payload.merge(customer_id: params[:customer_id]))
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 201
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while creating a record!"
+  end
+end
+
+# modify specific record by id and customer_id
+put '/customers/:customer_id/records/:id' do
+  payload = JSON.parse(request.body.read)
+  all_params = payload.merge(params).symbolize_keys
+  res = Record::Update.(all_params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 202
+  else
+    return_error response,
+      404,
+      res[:error_message]
   end
 end
 

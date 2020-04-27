@@ -13,3 +13,25 @@ if Customer.count == 0
     Customer.create cust
   end
 end
+
+########### Customers #############
+if Record.count == 0
+  puts "Creating records ..."
+  customer1 = Customer.first
+  customer2 = Customer.last
+
+  customer1.records.create({
+    artist: "Michael Jackson",
+    title: "Off the Wall",
+    format: "12Inch Vinyl",
+    genre: "Soul"
+  })
+
+  customer2.records.create({
+    artist: "Jimi Hendrix",
+    title: "The Jimi Hendrix Experience",
+    format: "12Inch Vinyl",
+    genre: "Rock"
+  })
+
+end
