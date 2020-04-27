@@ -1,5 +1,5 @@
 class Customer < ActiveRecord::Base
   def to_s
-    'TODO'
+    "Customer: email: #{email} , firstname: #{firstname} , lastname: #{lastname}, is_active: #{is_active}"
   end
 end
