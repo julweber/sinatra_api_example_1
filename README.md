@@ -54,6 +54,12 @@ Prerequisite: You need to start the server as described above in a separate cons
 ```
 curl -L http://localhost:3000 | jq '.'
 curl -L http://localhost:3000/redirect | jq '.'
+
+# Test health endpoint
+curl -L http://localhost:3000/health | jq '.'
+sudo service postgresql stop
+curl -L http://localhost:3000/health | jq '.'
+sudo service postgresql start
 curl -L http://localhost:3000/health | jq '.'
 
 # customers

@@ -63,9 +63,13 @@ end
 
 # health stats
 get '/health' do
-  {
-    todo: 'todo'
+  ActiveRecord::Base.connection.execute("SELECT * FROM customers LIMIT 1")
+  response.status = 200
+  response.body = {
+    database: 'OK'
   }.to_json
+rescue
+  return_error response, 500, "Could not establish database connection"
 end
 
 # main route
@@ -169,6 +173,6 @@ def return_error(response, error_code, message)
   response.body = {
     error_message: message,
     status: "#{error_code}"
-  }.to_jsons
+  }.to_json
   response.status = error_code
 end
