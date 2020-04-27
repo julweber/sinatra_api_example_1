@@ -207,7 +207,6 @@ end
 # create record
 post '/customers/:customer_id/records' do
   payload = JSON.parse(request.body.read).symbolize_keys
-  byebug
   res = Record::Create.(payload.merge(customer_id: params[:customer_id]))
   if res.success?
     response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
