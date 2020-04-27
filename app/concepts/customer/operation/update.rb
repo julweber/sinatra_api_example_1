@@ -5,7 +5,6 @@ class Customer::Update < Trailblazer::Operation
   failure :generate_error_message
 
   def retrieve_by_id(options, params:, **)
-    byebug
     options[:model] = Customer.where(id: params[:id]).first
     if options[:model]
       return true
@@ -25,7 +24,6 @@ class Customer::Update < Trailblazer::Operation
   end
 
   def generate_error_message(options, params:, **)
-    byebug
     options[:error_message] = "Could not update Customer with id: #{params[:id]}"
     return false
   end

@@ -23,5 +23,13 @@ gem 'trailblazer'
 # console
 gem 'irb', require: false
 
-# debugging
-gem 'byebug'
+group :test, :development do
+  # debugging
+  gem 'byebug'
+
+  # http client
+  gem 'httparty'
+  gem 'rack-test'
+  gem 'rspec'
+  gem 'database_cleaner-active_record'
+end

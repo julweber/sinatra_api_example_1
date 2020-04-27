@@ -14,11 +14,14 @@ require_relative 'concepts/representation/representation.rb'
 require_relative 'concepts/representation/item_representer.rb'
 require_relative 'concepts/representation/list_representer.rb'
 
+# customer operations
 require_relative 'concepts/customer/customer.rb'
 require_relative 'concepts/customer/operation/create.rb'
 require_relative 'concepts/customer/operation/list.rb'
 require_relative 'concepts/customer/operation/retrieve.rb'
 require_relative 'concepts/customer/operation/update.rb'
+require_relative 'concepts/customer/operation/activate.rb'
+require_relative 'concepts/customer/operation/deactivate.rb'
 
 
 ##############################
@@ -39,7 +42,7 @@ VERSION = File.open("VERSION").read
 ENVIRONMENT = ENV['RACK_ENV'] || 'development'
 puts "ENVIRONMENT: #{ENVIRONMENT}"
 
-if ENVIRONMENT != 'production'
+if ENVIRONMENT != 'production' && ENVIRONMENT != 'test'
   puts "ENV:"
   pp ENV
 end
@@ -123,7 +126,6 @@ end
 
 # modify specific customer by id
 put '/customers/:id' do
-  byebug
   payload = JSON.parse(request.body.read)
   all_params = payload.merge(params).symbolize_keys
   res = Customer::Update.(all_params)
@@ -134,6 +136,30 @@ put '/customers/:id' do
     return_error response,
       404,
       res[:error_message]
+  end
+end
+
+put '/customers/:id/activate' do
+  res = Customer::Activate.(params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 202
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while activating a customer!"
+  end
+end
+
+put '/customers/:id/deactivate' do
+  res = Customer::Deactivate.(params)
+  if res.success?
+    response.body = ::Representation::ItemRepresenter.new(res[:model]).to_json
+    response.status = 202
+  else
+    return_error response,
+      500,
+      "An unexpected error occured while deactivating a customer!"
   end
 end
 

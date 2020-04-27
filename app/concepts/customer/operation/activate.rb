@@ -1,5 +1,6 @@
-class Customer::Retrieve < Trailblazer::Operation
+class Customer::Activate < Trailblazer::Operation
   step :retrieve_by_id
+  step :activate
   failure :generate_error_message
 
   def retrieve_by_id(options, params:, **)
@@ -11,8 +12,13 @@ class Customer::Retrieve < Trailblazer::Operation
     end
   end
 
+  def activate(options, params:, **)
+    options[:model].is_active = true
+    options[:model].save
+  end
+
   def generate_error_message(options, params:, **)
-    options[:error_message] = "Could not load Customer with id: #{params[:id]}"
+    options[:error_message] = "Could not activate Customer with id: #{params[:id]}"
     return false
   end
 end

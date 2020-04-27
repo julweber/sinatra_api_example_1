@@ -1,5 +1,6 @@
-class Customer::Retrieve < Trailblazer::Operation
+class Customer::Deactivate < Trailblazer::Operation
   step :retrieve_by_id
+  step :deactivate
   failure :generate_error_message
 
   def retrieve_by_id(options, params:, **)
@@ -11,8 +12,13 @@ class Customer::Retrieve < Trailblazer::Operation
     end
   end
 
+  def deactivate(options, params:, **)
+    options[:model].is_active = false
+    options[:model].save
+  end
+
   def generate_error_message(options, params:, **)
-    options[:error_message] = "Could not load Customer with id: #{params[:id]}"
+    options[:error_message] = "Could not deactivate Customer with id: #{params[:id]}"
     return false
   end
 end

@@ -7,18 +7,47 @@ All stages will be tagged via git tags to document the development flow.
 git clone https://github.com/julweber/sinatra_api_example_1.git
 cd sinatra_api_example_1
 
-# env
+# env setup
 export DATABASE_HOST="localhost"
 export DATABASE_USERNAME="vagrant"
 export DATABASE_PASSWORD="vagrant"
 export RACK_ENV=development
 
+# gem dependency setup
 bundle update --bundler
 bundle install
+
+# database setup
 bundle exec rake db:setup
 bundle exec rake db:migrate
 bundle exec rake db:seed
+
+# start server
 bundle exec ruby ./app/app.rb
+```
+
+# Run testsuite
+```
+# env setup
+export DATABASE_HOST="localhost"
+export DATABASE_USERNAME="vagrant"
+export DATABASE_PASSWORD="vagrant"
+export RACK_ENV=test
+
+# gem dependency setup
+bundle install
+
+# database setup
+bundle exec rake db:create
+bundle exec rake db:migrate
+bundle exec rspec
+```
+
+# Test via records cli script
+Prerequisite: You need to start the server as described above in a separate console session
+
+```
+./scripts/records_cli.rb
 ```
 
 # Curl requests
