@@ -1,6 +1,6 @@
 class Record::Create < Trailblazer::Operation
   step :get_record_hash
-  step :create_customer
+  step :create_record
 
   def get_customer_hash(options, params:, **)
     options[:record_params] = params[:record]
