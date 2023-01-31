@@ -1,19 +1,14 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    activemodel (6.0.2.2)
-      activesupport (= 6.0.2.2)
-    activerecord (6.0.2.2)
-      activemodel (= 6.0.2.2)
-      activesupport (= 6.0.2.2)
-    activesupport (6.0.2.2)
+    activerecord (3.2.14)
+    activesupport (7.0.4.2)
       concurrent-ruby (~> 1.0, >= 1.0.2)
-      i18n (>= 0.7, < 2)
-      minitest (~> 5.1)
-      tzinfo (~> 1.1)
-      zeitwerk (~> 2.2)
+      i18n (>= 1.6, < 2)
+      minitest (>= 5.1)
+      tzinfo (~> 2.0)
     byebug (11.1.3)
-    concurrent-ruby (1.1.6)
+    concurrent-ruby (1.2.0)
     database_cleaner (1.8.4)
     database_cleaner-active_record (1.8.0)
       activerecord
@@ -32,7 +27,7 @@ GEM
     httparty (0.18.0)
       mime-types (~> 3.0)
       multi_xml (>= 0.5.2)
-    i18n (1.8.2)
+    i18n (1.12.0)
       concurrent-ruby (~> 1.0)
     io-console (0.5.6)
     irb (1.2.3)
@@ -40,7 +35,7 @@ GEM
     mime-types (3.3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2020.0425)
-    minitest (5.14.0)
+    minitest (5.17.0)
     multi_xml (0.6.0)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
@@ -80,10 +75,9 @@ GEM
       rack (~> 2.0)
       rack-protection (= 2.0.8.1)
       tilt (~> 2.0)
-    sinatra-activerecord (2.0.18)
-      activerecord (>= 4.1)
+    sinatra-activerecord (2.0.15)
+      activerecord (>= 3.2)
       sinatra (>= 1.0)
-    thread_safe (0.3.6)
     tilt (2.0.10)
     trailblazer (2.0.7)
       declarative
@@ -93,10 +87,9 @@ GEM
       declarative
       pipetree (>= 0.1.1, < 0.2.0)
       uber
-    tzinfo (1.2.7)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.6)
+      concurrent-ruby (~> 1.0)
     uber (0.1.0)
-    zeitwerk (2.3.0)
 
 PLATFORMS
   ruby
